@@ -22,6 +22,11 @@ import { AuthStore } from '../auth/auth-store';
               Clientes
             </a>
           </li>
+          <li>
+            <a routerLink="/layout/historial" routerLinkActive="active">
+              Historial
+            </a>
+          </li>
         </ul>
         <div class="user-info">
           <span>{{ authStore.user()?.nombre }}</span>

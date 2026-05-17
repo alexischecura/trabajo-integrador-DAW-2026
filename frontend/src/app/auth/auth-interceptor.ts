@@ -7,11 +7,14 @@ import { AuthStore } from './auth-store';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
+  const user = authStore.user();
 
-  if (authStore.isAuthenticated && req.url.includes('/api/')) {
+  if (user) {
     req = req.clone({
       setHeaders: {
-        'Content-Type': 'application/json'
+        ...req.headers.keys().reduce((acc, key) => ({ ...acc, [key]: req.headers.get(key) ?? '' }), {}),
+        'x-user-id': String(user.id),
+        'x-user-name': user.nombre,
       }
     });
   }

@@ -32,6 +32,10 @@ export const routes: Routes = [
       {
         path: 'tareas/:proyectoId',
         loadComponent: () => import('./pages/tareas/tareas').then(m => m.TareasComponent)
+      },
+      {
+        path: 'historial',
+        loadComponent: () => import('./pages/historial/historial').then(m => m.HistorialComponent)
       }
     ]
   },
