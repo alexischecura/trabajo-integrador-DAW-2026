@@ -34,9 +34,9 @@ import { FilterPanelComponent } from '../../shared/filter-panel';
       </div>
 
       <app-filter-panel
+        [title]="'Búsqueda de clientes'"
         [filters]="filters"
-        [statusOptions]="statusOptions"
-        [sortOptions]="sortOptions"
+        [fields]="filterFields"
         (search)="buscar()"
         (reset)="resetFilters()"
       ></app-filter-panel>
@@ -122,18 +122,20 @@ export class ClientesComponent implements OnInit {
     limit: 10
   };
 
-  statusOptions = [
-    { value: '', label: 'Todos' },
-    { value: 'ACTIVO', label: 'Activo' },
-    { value: 'BAJA', label: 'Baja' },
+  filterFields = [
+    { key: 'nombre', label: 'Nombre', type: 'text' },
+    { key: 'estado', label: 'Estado', type: 'select', options: [
+      { value: '', label: 'Todos' },
+      { value: 'ACTIVO', label: 'Activo' },
+      { value: 'BAJA', label: 'Baja' },
+    ] },
+    { key: 'sort', label: 'Ordenar por', type: 'select', options: [
+      { value: 'id', label: 'ID' },
+      { value: 'nombre', label: 'Nombre' },
+      { value: 'estado', label: 'Estado' },
+    ] },
   ];
 
-  sortOptions = [
-    { value: 'id', label: 'ID' },
-    { value: 'nombre', label: 'Nombre' },
-    { value: 'estado', label: 'Estado' },
-  ];
-  
   form = {
     nombre: '',
     estado: 'ACTIVO'

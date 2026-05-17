@@ -17,11 +17,11 @@ import { FilterPanelComponent } from '../../shared/filter-panel';
       <h1>Proyectos</h1>
 
       <app-filter-panel
+        [title]="'Búsqueda de proyectos'"
         [filters]="filters"
         [showClientFilter]="true"
         [clientOptions]="clientes"
-        [statusOptions]="statusOptions"
-        [sortOptions]="sortOptions"
+        [fields]="filterFields"
         (search)="buscar()"
         (reset)="resetFilters()"
       ></app-filter-panel>
@@ -181,18 +181,21 @@ export class ProyectosComponent implements OnInit {
     limit: 10
   };
 
-  statusOptions = [
-    { value: '', label: 'Todos' },
-    { value: 'ACTIVO', label: 'Activo' },
-    { value: 'FINALIZADO', label: 'Finalizado' },
-    { value: 'BAJA', label: 'Baja' },
-  ];
-
-  sortOptions = [
-    { value: 'id', label: 'ID' },
-    { value: 'nombre', label: 'Nombre' },
-    { value: 'estado', label: 'Estado' },
-    { value: 'fecha_fin', label: 'Fecha Fin' },
+  filterFields = [
+    { key: 'nombre', label: 'Nombre', type: 'text' },
+    { key: 'estado', label: 'Estado', type: 'select', options: [
+      { value: '', label: 'Todos' },
+      { value: 'ACTIVO', label: 'Activo' },
+      { value: 'FINALIZADO', label: 'Finalizado' },
+      { value: 'BAJA', label: 'Baja' },
+    ] },
+    { key: 'id_cliente', label: 'Cliente', type: 'client' },
+    { key: 'sort', label: 'Ordenar por', type: 'select', options: [
+      { value: 'id', label: 'ID' },
+      { value: 'nombre', label: 'Nombre' },
+      { value: 'estado', label: 'Estado' },
+      { value: 'fecha_fin', label: 'Fecha Fin' },
+    ] },
   ];
 
   form: any = {

@@ -2,6 +2,14 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+export interface FilterField {
+  key: string;
+  label: string;
+  type: 'text' | 'select' | 'client';
+  options?: Array<{ value: string; label: string }>;
+  placeholder?: string;
+}
+
 @Component({
   selector: 'app-filter-panel',
   standalone: true,
@@ -10,32 +18,21 @@ import { FormsModule } from '@angular/forms';
     <div class="card filter-card">
       <h2>{{ title }}</h2>
       <div class="filter-row">
-        <div class="form-group">
-          <label>Nombre</label>
-          <input type="text" [(ngModel)]="filters.nombre" name="nombreFilter" />
-        </div>
-
-        <div class="form-group">
-          <label>Estado</label>
-          <select [(ngModel)]="filters.estado" name="estadoFilter">
-            <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
-          </select>
-        </div>
-
-        <div class="form-group" *ngIf="showClientFilter">
-          <label>Cliente</label>
-          <select [(ngModel)]="filters.id_cliente" name="clienteFilter">
-            <option [value]="''">Todos</option>
-            <option *ngFor="let cliente of clientOptions" [value]="cliente.id">{{ cliente.nombre }}</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Ordenar por</label>
-          <select [(ngModel)]="filters.sort" name="sortFilter">
-            <option *ngFor="let option of sortOptions" [value]="option.value">{{ option.label }}</option>
-          </select>
-        </div>
+        <ng-container *ngFor="let field of fields">
+          <div class="form-group" *ngIf="field.type !== 'client' || showClientFilter">
+            <label>{{ field.label }}</label>
+            <ng-container [ngSwitch]="field.type">
+              <input *ngSwitchCase="'text'" type="text" [(ngModel)]="filters[field.key]" [name]="field.key" [placeholder]="field.placeholder || ''" />
+              <select *ngSwitchCase="'select'" [(ngModel)]="filters[field.key]" [name]="field.key">
+                <option *ngFor="let option of field.options" [value]="option.value">{{ option.label }}</option>
+              </select>
+              <select *ngSwitchCase="'client'" [(ngModel)]="filters[field.key]" [name]="field.key">
+                <option [value]="''">Todos</option>
+                <option *ngFor="let cliente of clientOptions" [value]="cliente.id">{{ cliente.nombre }}</option>
+              </select>
+            </ng-container>
+          </div>
+        </ng-container>
 
         <div class="form-group">
           <label>Dirección</label>
@@ -80,17 +77,21 @@ export class FilterPanelComponent {
   @Input() filters: any = {};
   @Input() showClientFilter = false;
   @Input() clientOptions: any[] = [];
-  @Input() statusOptions: Array<{ value: string; label: string }> = [
-    { value: '', label: 'Todos' },
-    { value: 'ACTIVO', label: 'Activo' },
-    { value: 'FINALIZADO', label: 'Finalizado' },
-    { value: 'BAJA', label: 'Baja' },
-  ];
-  @Input() sortOptions: Array<{ value: string; label: string }> = [
-    { value: 'id', label: 'ID' },
-    { value: 'nombre', label: 'Nombre' },
-    { value: 'estado', label: 'Estado' },
-    { value: 'fecha_fin', label: 'Fecha Fin' },
+  @Input() fields: FilterField[] = [
+    { key: 'nombre', label: 'Nombre', type: 'text' },
+    { key: 'estado', label: 'Estado', type: 'select', options: [
+      { value: '', label: 'Todos' },
+      { value: 'ACTIVO', label: 'Activo' },
+      { value: 'FINALIZADO', label: 'Finalizado' },
+      { value: 'BAJA', label: 'Baja' },
+    ] },
+    { key: 'id_cliente', label: 'Cliente', type: 'client' },
+    { key: 'sort', label: 'Ordenar por', type: 'select', options: [
+      { value: 'id', label: 'ID' },
+      { value: 'nombre', label: 'Nombre' },
+      { value: 'estado', label: 'Estado' },
+      { value: 'fecha_fin', label: 'Fecha Fin' },
+    ] },
   ];
 
   @Output() search = new EventEmitter<void>();
