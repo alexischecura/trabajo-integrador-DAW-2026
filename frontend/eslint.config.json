@@ -1,0 +1,17 @@
+{
+  "plugins": [
+    {
+      "name": "@angular-eslint/eslint-plugin-template"
+    }
+  ],
+  "overrides": [
+    {
+      "files": ["*.html"],
+      "parser": "@angular-eslint/template-parser",
+      "rules": {
+        "@angular-eslint/template/cyclomatic-complexity": "off",
+        "@angular-eslint/template/inspect-buttons-per-row": "off"
+      }
+    }
+  ]
+}
