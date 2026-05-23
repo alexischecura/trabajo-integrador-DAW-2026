@@ -1,12 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { TareasService } from '../../services/tareas.service';
-import { ProyectosService } from '../../services/proyectos.service';
-import { ClientesService } from '../../services/clientes.service';
+
 import { ActivatedRoute } from '@angular/router';
+import { ClientesService } from '../../services/clientes.service';
+import { CommonModule } from '@angular/common';
 import { FilterPanelComponent } from '../../shared/filter-panel';
+import { FormsModule } from '@angular/forms';
+import { ProyectosService } from '../../services/proyectos.service';
+import { TareasService } from '../../services/tareas.service';
 
 @Component({
   selector: 'app-proyectos',
@@ -74,7 +75,15 @@ import { FilterPanelComponent } from '../../shared/filter-panel';
         <form (ngSubmit)="guardar()">
           <div class="form-group">
             <label>Nombre</label>
-            <input type="text" [(ngModel)]="form.nombre" name="nombre" required />
+            <input
+              type="text"
+              [(ngModel)]="form.nombre"
+              name="nombre"
+              [class.input-error]="submitted && !form.nombre?.trim()"
+            />
+            @if (submitted && !form.nombre?.trim()) {
+              <span class="error-msg">El nombre es obligatorio</span>
+            }
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -108,28 +117,11 @@ import { FilterPanelComponent } from '../../shared/filter-panel';
     </div>
   `,
   styles: [`
-    .filter-card {
-      margin-bottom: 20px;
-    }
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .filter-row .form-group {
-      flex: 1;
-      min-width: 180px;
-    }
-    .filter-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .badge {
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-    }
+    .filter-card { margin-bottom: 20px; }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 15px; }
+    .filter-row .form-group { flex: 1; min-width: 180px; }
+    .filter-actions { display: flex; gap: 10px; margin-top: 10px; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
     .ACTIVO { background: #d4edda; color: #155724; }
     .FINALIZADO { background: #cce5ff; color: #004085; }
     .BAJA { background: #f8d7da; color: #721c24; }
@@ -137,19 +129,16 @@ import { FilterPanelComponent } from '../../shared/filter-panel';
     .proximo { background: #fff3cd; color: #856404; }
     .retrasado { background: #f8d7da; color: #721c24; }
     button { margin-right: 5px; }
-    .form-row {
-      display: flex;
-      gap: 15px;
-    }
-    .form-row .form-group {
-      flex: 1;
-    }
+    .form-row { display: flex; gap: 15px; }
+    .form-row .form-group { flex: 1; }
     .pagination {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: 15px;
     }
+    .input-error { border-color: #dc3545 !important; }
+    .error-msg { color: #dc3545; font-size: 12px; margin-top: 4px; display: block; }
   `]
 })
 export class ProyectosComponent implements OnInit {
@@ -170,6 +159,7 @@ export class ProyectosComponent implements OnInit {
   page = 1;
   limit = 10;
   totalPages = 0;
+  submitted = false; // NUEVO
 
   filters = {
     nombre: '',
@@ -188,14 +178,14 @@ export class ProyectosComponent implements OnInit {
       { value: 'ACTIVO', label: 'Activo' },
       { value: 'FINALIZADO', label: 'Finalizado' },
       { value: 'BAJA', label: 'Baja' },
-    ] },
+    ]},
     { key: 'id_cliente', label: 'Cliente', type: 'client' },
     { key: 'sort', label: 'Ordenar por', type: 'select', options: [
       { value: 'id', label: 'ID' },
       { value: 'nombre', label: 'Nombre' },
       { value: 'estado', label: 'Estado' },
       { value: 'fecha_fin', label: 'Fecha Fin' },
-    ] },
+    ]},
   ];
 
   form: any = {
@@ -250,9 +240,7 @@ export class ProyectosComponent implements OnInit {
 
   changePage(delta: number) {
     const nextPage = this.page + delta;
-    if (nextPage < 1 || nextPage > this.totalPages) {
-      return;
-    }
+    if (nextPage < 1 || nextPage > this.totalPages) return;
     this.filters.page = nextPage;
     this.cargar();
   }
@@ -262,20 +250,35 @@ export class ProyectosComponent implements OnInit {
   }
 
   guardar() {
-    const data: any = { ...this.form };
-    if (!data.fecha_fin) {
-      data.fecha_fin = null;
+    this.submitted = true;
+
+    if (!this.form.nombre || this.form.nombre.trim() === '') {
+      return;
     }
-    
+
+    this.submitted = false;
+    const data: any = { ...this.form };
+    if (!data.fecha_fin) data.fecha_fin = null;
+
     if (this.editando && this.editId !== null) {
-      this.proyectosService.update(this.editId, data).subscribe(() => {
-        this.buscar();
-        this.limpiar();
+      this.proyectosService.update(this.editId, data).subscribe({
+        next: () => { this.buscar(); this.limpiar(); },
+        error: (err) => {
+          const msg = Array.isArray(err.error?.message)
+            ? err.error.message.join('\n')
+            : err.error?.message ?? 'Error al actualizar el proyecto';
+          alert(msg);
+        }
       });
     } else {
-      this.proyectosService.create(data).subscribe(() => {
-        this.buscar();
-        this.limpiar();
+      this.proyectosService.create(data).subscribe({
+        next: () => { this.buscar(); this.limpiar(); },
+        error: (err) => {
+          const msg = Array.isArray(err.error?.message)
+            ? err.error.message.join('\n')
+            : err.error?.message ?? 'Error al crear el proyecto';
+          alert(msg);
+        }
       });
     }
   }
@@ -302,6 +305,7 @@ export class ProyectosComponent implements OnInit {
   }
 
   private limpiar() {
+    this.submitted = false; // NUEVO
     this.editando = false;
     this.editId = null;
     this.form = { nombre: '', estado: 'ACTIVO', id_cliente: null, fecha_fin: '' };
