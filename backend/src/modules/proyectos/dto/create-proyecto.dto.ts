@@ -1,6 +1,7 @@
 import { IsDateString, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { EstadoProyecto } from '../entities/estado-proyecto.enum';
+import { Type } from 'class-transformer';
 
 export class CreateProyectoDto {
   @IsString()
@@ -12,6 +13,7 @@ export class CreateProyectoDto {
   estado?: EstadoProyecto;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   id_cliente?: number | null;
 

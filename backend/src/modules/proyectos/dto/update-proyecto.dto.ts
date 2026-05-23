@@ -1,6 +1,7 @@
 import { IsDateString, IsEnum, IsInt, IsOptional, IsString, MinLength } from 'class-validator';
 
 import { EstadoProyecto } from '../entities/estado-proyecto.enum';
+import { Type } from 'class-transformer';
 
 export class UpdateProyectoDto {
   @IsOptional()
@@ -13,6 +14,7 @@ export class UpdateProyectoDto {
   estado?: EstadoProyecto;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   id_cliente?: number | null;
 
