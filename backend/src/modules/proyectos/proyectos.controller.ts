@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Query, Headers } from '@nestjs/common';
 import { ProyectosService } from './proyectos.service';
 import { HistorialService } from '../historial/historial.service';
+import { CreateProyectoDto } from './dto/create-proyecto.dto';
+import { UpdateProyectoDto } from './dto/update-proyecto.dto';
 
 @Controller('proyectos')
 export class ProyectosController {
@@ -21,7 +23,7 @@ export class ProyectosController {
 
   @Post()
   async create(
-    @Body() body: any,
+    @Body() body: CreateProyectoDto,
     @Headers('x-user-id') userId: string,
     @Headers('x-user-name') userName: string,
   ) {
@@ -40,15 +42,13 @@ export class ProyectosController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() body: any,
+    @Body() body: UpdateProyectoDto,
     @Headers('x-user-id') userId: string,
     @Headers('x-user-name') userName: string,
   ) {
     const proyectoAnterior = await this.proyectosService.findOne(+id);
     const proyecto = await this.proyectosService.update(+id, body);
-    
     const cambios = this.calcularCambios(proyectoAnterior, proyecto);
-    
     await this.historialService.record({
       usuario_id: Number(userId) || 0,
       usuario_nombre: userName || 'desconocido',
@@ -62,16 +62,11 @@ export class ProyectosController {
 
   private calcularCambios(anterior: any, actual: any): Record<string, any> {
     const cambios: Record<string, any> = {};
-    
     Object.keys(actual).forEach(key => {
-      const valorAnterior = anterior[key];
-      const valorActual = actual[key];
-      
-      if (JSON.stringify(valorAnterior) !== JSON.stringify(valorActual)) {
-        cambios[key] = { antes: valorAnterior, después: valorActual };
+      if (JSON.stringify(anterior[key]) !== JSON.stringify(actual[key])) {
+        cambios[key] = { antes: anterior[key], después: actual[key] };
       }
     });
-    
     return cambios;
   }
 

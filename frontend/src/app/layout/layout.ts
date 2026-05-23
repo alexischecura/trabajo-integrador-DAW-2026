@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { Router } from '@angular/router';
+
 import { AuthStore } from '../auth/auth-store';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
@@ -26,6 +27,9 @@ import { AuthStore } from '../auth/auth-store';
             <a routerLink="/layout/historial" routerLinkActive="active">
               Historial
             </a>
+          </li>
+                    <li>
+       <a routerLink="/layout/estadisticas" routerLinkActive="active">Estadísticas</a>
           </li>
         </ul>
         <div class="user-info">

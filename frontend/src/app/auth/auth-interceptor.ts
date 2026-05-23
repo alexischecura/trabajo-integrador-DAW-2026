@@ -1,20 +1,19 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
+
 import { AuthStore } from './auth-store';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { inject } from '@angular/core';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
-  const user = authStore.user();
+  const token = authStore.token;
 
-  if (user) {
+  if (token) {
     req = req.clone({
       setHeaders: {
-        ...req.headers.keys().reduce((acc, key) => ({ ...acc, [key]: req.headers.get(key) ?? '' }), {}),
-        'x-user-id': String(user.id),
-        'x-user-name': user.nombre,
+        Authorization: `Bearer ${token}`,
       }
     });
   }

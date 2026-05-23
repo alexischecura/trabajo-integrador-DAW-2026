@@ -1,12 +1,15 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './modules/auth/auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
-import { UsuariosModule } from './modules/usuarios/usuarios.module';
 import { ClientesModule } from './modules/clientes/clientes.module';
+import { ConfigModule } from '@nestjs/config';
+import { EstadisticasModule } from './modules/estadisticas/estadisticas.module';
+import { HistorialModule } from './modules/historial/historial.module';
+import { Module } from '@nestjs/common';
 import { ProyectosModule } from './modules/proyectos/proyectos.module';
 import { TareasModule } from './modules/tareas/tareas.module';
-import { HistorialModule } from './modules/historial/historial.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsuariosModule } from './modules/usuarios/usuarios.module';
 
 @Module({
   imports: [
@@ -29,6 +32,13 @@ import { HistorialModule } from './modules/historial/historial.module';
     ProyectosModule,
     TareasModule,
     HistorialModule,
+    EstadisticasModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
   ],
 })
 export class AppModule {}
