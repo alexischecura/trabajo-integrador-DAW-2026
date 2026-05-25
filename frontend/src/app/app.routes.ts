@@ -40,6 +40,10 @@ export const routes: Routes = [
       {
         path: 'estadisticas',
         loadComponent: () => import('./pages/estadisticas/estadisticas').then(m => m.EstadisticasComponent)
+      },
+      {
+        path: 'tablero/:proyectoId',
+        loadComponent: () => import('./pages/tablero/tablero').then(m => m.TableroComponent)
       }
     ]
   },
