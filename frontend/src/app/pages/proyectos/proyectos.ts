@@ -57,6 +57,7 @@ import { TareasService } from '../../services/tareas.service';
                   <button class="btn btn-primary" (click)="editar(proyecto)">Editar</button>
                   <button class="btn btn-danger" (click)="eliminar(proyecto.id)">Eliminar</button>
                   <button class="btn btn-secondary" [routerLink]="['/layout/tareas', proyecto.id]">Tareas</button>
+                  <button class="btn btn-success" [routerLink]="['/layout/tablero', proyecto.id]">Tablero</button>
                 </td>
               </tr>
             }
