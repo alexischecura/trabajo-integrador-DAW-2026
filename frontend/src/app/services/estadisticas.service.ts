@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class EstadisticasService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/estadisticas'; 
+  private baseUrl = 'http://localhost:4000/estadisticas'; 
 
   getEstadisticas(): Observable<any> {
     return this.http.get<any>(this.baseUrl);

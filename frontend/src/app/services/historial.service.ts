@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class HistorialService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/historial';
+  private baseUrl = 'http://localhost:4000/historial';
 
   getAll(entidad?: string): Observable<any[]> {
     let params = new HttpParams();

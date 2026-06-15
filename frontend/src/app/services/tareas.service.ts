@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class TareasService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/tareas';
+  private baseUrl = 'http://localhost:4000/tareas';
 
   getAll(): Observable<any[]> {
     return this.http.get<any[]>(this.baseUrl);

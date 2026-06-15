@@ -161,7 +161,7 @@ import { FormsModule } from '@angular/forms';
 
       .cdk-drag-preview {
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        background-color: white;
+        background-color: #fff;
       }
       .btns {
         display: flex;

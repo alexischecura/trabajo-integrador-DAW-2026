@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nest build",
     "start": "nest start",
+    "deploy": "npm run build && pm2 start ecosystem.config.js",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main"
   },

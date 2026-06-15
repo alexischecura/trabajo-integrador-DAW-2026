@@ -45,7 +45,7 @@ import { Router } from '@angular/router';
   styles: [`
     .layout {
       display: flex;
-      min-height: 100vh;
+      height: 100vh;
     }
     .sidebar {
       width: 250px;

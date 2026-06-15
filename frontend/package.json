@@ -4,6 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config src/proxy.conf.json",
+    "deploy":"npm run build && npm run nginx:limpiar && npm run nginx:llenar",
+    "nginx:limpiar": "del /F /Q C:\\nginx-1.28.2\\html\\* && for /d %x in (C:\\nginx-1.28.2\\html\\*) do rmdir /S /Q \"%x\"",
+    "nginx:llenar":"xcopy /E /I dist\\frontend\\browser\\* C:\\nginx-1.28.2\\html\\",
+    "deploy-linux": "npm run build && npm run nginx:limpiar-linux && npm run nginx:llenar-linux",
+    "nginx:limpiar-linux": "rm -rf /usr/share/nginx/html/*",
+    "nginx:llenar-linux": "cp -r dist/frontend/browser/* /usr/share/nginx/html/",
     "build": "ng build"
   },
   "dependencies": {

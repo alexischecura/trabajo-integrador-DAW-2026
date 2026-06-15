@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ClientesService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/clientes';
+  private baseUrl = 'http://localhost:4000/clientes';
 
   getAll(params?: Record<string, any>): Observable<any> {
     let httpParams = new HttpParams();
